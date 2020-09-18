@@ -5,7 +5,7 @@
 
 #include "notification.h"
 #include "tcp.h"
-#include "exprtk.hpp"
+#include "calculator.hpp"
 
 using epoll_threadpool::EventManager;
 using epoll_threadpool::IOBuffer;
@@ -107,30 +107,25 @@ void server::receiveChecker(Notification *n, IOBuffer *data)
 	uint64_t size = data->size();
 	const char *str = static_cast<const char *>(data->pulldown(size));
 
-	typedef exprtk::expression<double> expression_t;
-	typedef exprtk::parser<double> parser_t;
-
-	expression_t expression;
-	parser_t parser;
-
 	stringstream ss;
 	ss << fixed;
-	ss << setprecision(5);
 
 	string result;
 
 	cout << "server received message: " << string(str, size) << endl;
 	string expression_string = string(str, size);
 
-	if (parser.compile(expression_string, expression))
+	try
 	{
-		ss << expression.value();
+		// 64-bit arithmetic
+		ss << calculator::eval<int64_t>(expression_string);
 		ss >> result;
 		cout << "result: " << result << endl;
 		write(fds[1], result.c_str(), result.size());
 	}
-	else
+	catch (calculator::error &e)
 	{
+		cerr << e.what() << endl;
 		write(fds[1], "error", 5);
 	}
 	data->consume(size);
