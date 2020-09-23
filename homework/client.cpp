@@ -39,9 +39,23 @@ public:
 
 	void writeData()
 	{
-		data = "1+(23-456)*7890/2";
-		c->write(new IOBuffer(data, strlen(data)));
-		cout << "client sent message: " << data << endl;
+		string lim = "0123456789+-*/()";
+		string str;
+
+		cout << "please enter an expression: ";
+		getline(cin, str);
+
+		size_t found = str.find_first_not_of(lim);
+		if (found != string::npos)
+		{
+			cout << "expression is wrong format" << endl;
+		}
+		else
+		{
+			data = str.c_str();
+			c->write(new IOBuffer(data, strlen(data)));
+			cout << "client sent message: " << data << endl;
+		}
 	}
 
 	void wait()

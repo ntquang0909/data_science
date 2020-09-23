@@ -4,6 +4,8 @@
 #include <sstream>
 #include <stack>
 
+using namespace std;
+
 namespace calculator
 {
 
@@ -229,6 +231,16 @@ namespace calculator
       T value = 0;
       for (T d; (d = getInteger()) <= 9; index_++)
         value = value * 10 + d;
+      
+      try
+      {
+        stoll(to_string(value)); // from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+      }
+      catch(const std::out_of_range& )
+      {
+        throw calculator::error(expr_, "an element in the expression is out of range");
+      }
+      
       return value;
     }
 

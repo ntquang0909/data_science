@@ -118,7 +118,7 @@ void server::receiveChecker(Notification *n, IOBuffer *data)
 	try
 	{
 		// 64-bit arithmetic
-		ss << calculator::eval<int64_t>(expression_string);
+		ss << calculator::eval<long double>(expression_string);
 		ss >> result;
 		cout << "result: " << result << endl;
 		write(fds[1], result.c_str(), result.size());
